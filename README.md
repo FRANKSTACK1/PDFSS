@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://frankstack1.github.io/PDFSS/">Live Demo</a>
+  <a href="https://pdfss.netlify.app/">Live Demo</a>
   ·
   <a href="https://frankstack1.github.io/PIXORA-Tools/">PIXORA Tools</a>
   ·
