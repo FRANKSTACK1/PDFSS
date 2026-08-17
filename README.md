@@ -261,7 +261,7 @@ No backend server or database is required.
 
 The live version of PDFSS is available at:
 
-**https://frankstack1.github.io/PDFSS/**
+**https://pdfss.netlify.app/**
 
 ---
 
