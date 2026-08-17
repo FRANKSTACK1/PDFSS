@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDFSS — Free Image to PDF Converter</title>
+<meta name="description" content="Convert images to PDF instantly with PDFSS. Upload, arrange, customize and download your PDF directly in your browser.">
+
+<!-- Open Graph -->
+<meta property="og:title" content="PDFSS — Free Image to PDF Converter">
+<meta property="og:description" content="Convert images to PDF instantly with PDFSS. Upload, arrange, customize and download your PDF directly in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/og-image.png">
+
+<!-- Favicon -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%237C3AED'/%3E%3Ctext x='32' y='42' font-family='Arial, sans-serif' font-weight='700' font-size='26' fill='white' text-anchor='middle'%3EPS%3C/text%3E%3C/svg%3E">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          purple: { DEFAULT: '#7C3AED', deep: '#5B21B6', light: '#EDE9FE' },
+          ink: '#18181B',
+          surface: '#F8FAFC'
+        },
+        fontFamily: {
+          display: ['Sora', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace']
+        },
+        boxShadow: {
+          soft: '0 2px 10px rgba(124, 58, 237, 0.06)',
+          card: '0 8px 30px rgba(91, 33, 182, 0.08)',
+          lifted: '0 20px 45px rgba(91, 33, 182, 0.16)'
+        }
+      }
+    }
+  }
+</script>
+
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="font-body bg-surface text-ink antialiased">
+
+<!-- Skip link -->
+<a href="#converter" class="skip-link">Skip to converter</a>
+
+<!-- ============ HEADER ============ -->
+<header class="sticky top-0 z-40 header-blur border-b border-purple-light/70 dark:border-white/10">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
+    <a href="#top" class="flex items-center gap-2.5 group">
+      <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple to-purple-deep flex items-center justify-center text-white font-display font-bold text-sm shadow-soft group-hover:scale-105 transition-transform">PS</span>
+      <span class="flex flex-col leading-none">
+        <span class="font-display font-bold text-lg tracking-tight">PDFSS</span>
+        <span class="hidden sm:block text-[11px] text-ink/50 dark:text-white/50">Image to PDF, made simple.</span>
+      </span>
+    </a>
+
+    <nav class="hidden md:flex items-center gap-8 text-sm font-medium" aria-label="Primary">
+      <a href="#top" class="nav-link">Home</a>
+      <a href="#converter" class="nav-link">Image to PDF</a>
+      <a href="#how-it-works" class="nav-link">How It Works</a>
+      <a href="https://frankstack1.github.io/PIXORA-Tools/" target="_blank" rel="noopener noreferrer" class="nav-link">PIXORA Tools <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-0.5"></i></a>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button id="theme-toggle" type="button" aria-label="Toggle dark mode" aria-pressed="false"
+        class="w-10 h-10 rounded-full flex items-center justify-center border border-purple-light dark:border-white/15 hover:bg-purple-light dark:hover:bg-white/10 transition-colors">
+        <i class="fa-solid fa-moon dark:hidden text-purple-deep"></i>
+        <i class="fa-solid fa-sun hidden dark:block text-yellow-300"></i>
+      </button>
+      <a href="#converter" class="hidden sm:inline-flex btn-primary text-sm px-5 py-2.5">Create PDF</a>
+      <button id="mobile-menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu" class="md:hidden w-10 h-10 rounded-full flex items-center justify-center border border-purple-light dark:border-white/15">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden md:hidden border-t border-purple-light/70 dark:border-white/10 bg-white dark:bg-[#15101F] px-5 py-4 flex flex-col gap-4 text-sm font-medium">
+    <a href="#top" class="nav-link">Home</a>
+    <a href="#converter" class="nav-link">Image to PDF</a>
+    <a href="#how-it-works" class="nav-link">How It Works</a>
+    <a href="https://frankstack1.github.io/PIXORA-Tools/" target="_blank" rel="noopener noreferrer" class="nav-link">PIXORA Tools</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="relative overflow-hidden">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="max-w-7xl mx-auto px-5 sm:px-8 pt-16 pb-20 md:pt-24 md:pb-28 grid md:grid-cols-2 gap-14 items-center relative">
+      <div>
+        <span class="inline-flex items-center gap-2 text-xs font-semibold tracking-wide uppercase text-purple-deep dark:text-purple-light bg-purple-light dark:bg-white/10 px-3 py-1.5 rounded-full">
+          <i class="fa-solid fa-bolt"></i> 100% browser-based
+        </span>
+        <h1 class="font-display font-extrabold text-4xl sm:text-5xl lg:text-6xl leading-[1.05] mt-5 tracking-tight">
+          Turn Your Images Into <span class="text-gradient">PDF Files</span>
+        </h1>
+        <p class="mt-6 text-lg text-ink/70 dark:text-white/70 max-w-lg">
+          Convert JPG, PNG, WEBP and other supported images into a clean PDF in seconds. No signup. No database. No complicated setup.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a href="#converter" class="btn-primary">
+            <i class="fa-solid fa-file-arrow-up"></i> Create PDF
+          </a>
+          <a href="https://frankstack1.github.io/PIXORA-Tools/" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+            Explore PIXORA Tools <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="relative" aria-hidden="true">
+        <div class="hero-stack">
+          <div class="stack-photo stack-photo--1"><i class="fa-solid fa-image"></i></div>
+          <div class="stack-photo stack-photo--2"><i class="fa-solid fa-image"></i></div>
+          <div class="stack-photo stack-photo--3"><i class="fa-solid fa-image"></i></div>
+          <div class="stack-arrow"><i class="fa-solid fa-arrow-right-long"></i></div>
+          <div class="stack-pdf">
+            <i class="fa-solid fa-file-pdf"></i>
+            <span class="stack-pdf__label">PDF</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONVERTER APP ============ -->
+  <section id="converter" class="max-w-6xl mx-auto px-5 sm:px-8 pb-24 scroll-mt-20">
+    <div class="app-card">
+      <div class="text-center max-w-xl mx-auto mb-10">
+        <h2 class="font-display font-bold text-3xl sm:text-4xl tracking-tight">Image to PDF Converter</h2>
+        <p class="mt-3 text-ink/60 dark:text-white/60">Upload your images, arrange them, customize your PDF and download it instantly.</p>
+      </div>
+
+      <!-- Upload area -->
+      <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload images: drop files here or click to browse">
+        <input type="file" id="file-input" class="sr-only" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" multiple aria-hidden="true">
+        <div class="flex flex-col items-center text-center pointer-events-none">
+          <div class="dropzone__icon">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+          </div>
+          <p class="font-display font-semibold text-xl mt-4">Drop your images here</p>
+          <p class="text-ink/50 dark:text-white/50 text-sm mt-1">or click to browse</p>
+          <div class="mt-5 pointer-events-auto">
+            <button type="button" id="browse-btn" class="btn-primary">
+              <i class="fa-solid fa-images"></i> Choose Images
+            </button>
+          </div>
+          <p class="text-xs text-ink/40 dark:text-white/40 mt-4">Supports JPG, JPEG, PNG, WEBP</p>
+        </div>
+      </div>
+      <p id="upload-error" class="hidden mt-3 text-sm text-red-600 dark:text-red-400" role="alert"></p>
+
+      <!-- Image queue -->
+      <div id="queue-section" class="hidden mt-10">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-display font-semibold text-lg flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-purple"></i>
+            Your Images <span id="queue-count" class="text-ink/40 dark:text-white/40 font-normal text-sm">(0)</span>
+          </h3>
+          <button type="button" id="clear-all-btn" class="text-sm font-semibold text-red-600 dark:text-red-400 hover:underline flex items-center gap-1.5">
+            <i class="fa-solid fa-trash-can"></i> Clear All
+          </button>
+        </div>
+        <p class="text-xs text-ink/45 dark:text-white/45 mb-4">Drag images to reorder, or use the arrow buttons. Page order in your PDF follows this list.</p>
+        <ul id="image-queue" class="queue-grid" aria-label="Uploaded images, reorderable list"></ul>
+      </div>
+
+      <!-- Settings -->
+      <div id="settings-section" class="hidden mt-12 grid lg:grid-cols-5 gap-10">
+        <div class="lg:col-span-2">
+          <h3 class="font-display font-semibold text-lg flex items-center gap-2 mb-5">
+            <i class="fa-solid fa-sliders text-purple"></i> PDF Settings
+          </h3>
+
+          <div class="space-y-6">
+            <fieldset>
+              <legend class="setting-label">Page Size</legend>
+              <div class="pill-group" data-setting="pageSize">
+                <button type="button" class="pill" data-value="A4" aria-pressed="true">A4</button>
+                <button type="button" class="pill" data-value="A3" aria-pressed="false">A3</button>
+                <button type="button" class="pill" data-value="Letter" aria-pressed="false">Letter</button>
+                <button type="button" class="pill" data-value="Legal" aria-pressed="false">Legal</button>
+                <button type="button" class="pill" data-value="Auto" aria-pressed="false">Auto</button>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend class="setting-label">Orientation</legend>
+              <div class="pill-group" data-setting="orientation">
+                <button type="button" class="pill" data-value="Portrait" aria-pressed="false">Portrait</button>
+                <button type="button" class="pill" data-value="Landscape" aria-pressed="false">Landscape</button>
+                <button type="button" class="pill" data-value="Auto" aria-pressed="true">Auto</button>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend class="setting-label">Image Fit</legend>
+              <div class="pill-group" data-setting="fit">
+                <button type="button" class="pill" data-value="Fit to page" aria-pressed="true">Fit to page</button>
+                <button type="button" class="pill" data-value="Fill page" aria-pressed="false">Fill page</button>
+                <button type="button" class="pill" data-value="Original size" aria-pressed="false">Original size</button>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend class="setting-label">Margin</legend>
+              <div class="pill-group" data-setting="margin">
+                <button type="button" class="pill" data-value="None" aria-pressed="false">None</button>
+                <button type="button" class="pill" data-value="Small" aria-pressed="true">Small</button>
+                <button type="button" class="pill" data-value="Medium" aria-pressed="false">Medium</button>
+                <button type="button" class="pill" data-value="Large" aria-pressed="false">Large</button>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend class="setting-label">PDF Quality</legend>
+              <div class="pill-group" data-setting="quality">
+                <button type="button" class="pill" data-value="Standard" aria-pressed="false">Standard</button>
+                <button type="button" class="pill" data-value="High" aria-pressed="true">High</button>
+                <button type="button" class="pill" data-value="Maximum" aria-pressed="false">Maximum</button>
+              </div>
+            </fieldset>
+
+            <div>
+              <label for="filename-input" class="setting-label">PDF filename</label>
+              <div class="flex items-center rounded-xl border border-purple-light dark:border-white/15 overflow-hidden focus-within:ring-2 focus-within:ring-purple">
+                <input type="text" id="filename-input" placeholder="my-images" class="w-full px-4 py-2.5 bg-transparent outline-none text-sm">
+                <span class="px-3 text-sm text-ink/40 dark:text-white/40 font-mono">.pdf</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="lg:col-span-3">
+          <div class="flex items-center justify-between mb-5">
+            <h3 class="font-display font-semibold text-lg flex items-center gap-2">
+              <i class="fa-solid fa-file-pdf text-purple"></i> PDF Preview
+            </h3>
+            <div class="flex items-center gap-3 text-sm">
+              <button type="button" id="preview-prev" class="preview-nav-btn" aria-label="Previous page"><i class="fa-solid fa-chevron-left"></i></button>
+              <span id="preview-page-indicator" class="font-mono text-ink/60 dark:text-white/60 min-w-[64px] text-center">1 / 1</span>
+              <button type="button" id="preview-next" class="preview-nav-btn" aria-label="Next page"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+          </div>
+
+          <div id="preview-stage" class="preview-stage">
+            <p class="text-sm text-ink/40 dark:text-white/40">Upload images to see a live preview</p>
+          </div>
+          <p id="preview-dims" class="text-center text-xs text-ink/40 dark:text-white/40 mt-3 font-mono"></p>
+        </div>
+      </div>
+
+      <!-- Generate -->
+      <div id="generate-section" class="hidden mt-12 pt-10 border-t border-purple-light dark:border-white/10 text-center">
+        <button type="button" id="generate-btn" class="btn-primary btn-lg mx-auto">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span id="generate-btn-label">Generate PDF</span>
+        </button>
+
+        <div id="generate-status" class="mt-6" aria-live="polite"></div>
+      </div>
+
+      <p id="empty-state-hint" class="text-center text-sm text-ink/40 dark:text-white/40 mt-2">Upload at least one image to get started.</p>
+    </div>
+  </section>
+
+  <!-- ============ PRIVACY ============ -->
+  <section class="max-w-6xl mx-auto px-5 sm:px-8 pb-24">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <h2 class="font-display font-bold text-3xl sm:text-4xl tracking-tight">Your Files Stay Yours</h2>
+      <p class="mt-4 text-ink/60 dark:text-white/60">PDFSS processes your images directly in your browser. Your images don't need to be stored in a database or uploaded to an account.</p>
+    </div>
+    <div class="grid sm:grid-cols-3 gap-6">
+      <div class="feature-card">
+        <div class="feature-card__icon"><i class="fa-solid fa-database"></i></div>
+        <h3 class="font-display font-semibold text-lg mt-4">No Database</h3>
+        <p class="text-sm text-ink/60 dark:text-white/60 mt-2">Your files don't need permanent storage.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon"><i class="fa-solid fa-user-slash"></i></div>
+        <h3 class="font-display font-semibold text-lg mt-4">No Signup</h3>
+        <p class="text-sm text-ink/60 dark:text-white/60 mt-2">Start converting immediately.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon"><i class="fa-solid fa-laptop-code"></i></div>
+        <h3 class="font-display font-semibold text-lg mt-4">Browser-Based</h3>
+        <p class="text-sm text-ink/60 dark:text-white/60 mt-2">Generate your PDF directly from your device.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section id="how-it-works" class="max-w-6xl mx-auto px-5 sm:px-8 pb-24 scroll-mt-20">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <h2 class="font-display font-bold text-3xl sm:text-4xl tracking-tight">How It Works</h2>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="step-card">
+        <span class="step-card__num">01</span>
+        <h3 class="font-display font-semibold text-lg mt-3">Upload</h3>
+        <p class="text-sm text-ink/60 dark:text-white/60 mt-2">Choose or drag your images into PDFSS.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-card__num">02</span>
+        <h3 class="font-display font-semibold text-lg mt-3">Arrange</h3>
+        <p class="text-sm text-ink/60 dark:text-white/60 mt-2">Reorder your images and customize your PDF.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-card__num">03</span>
+        <h3 class="font-display font-semibold text-lg mt-3">Download</h3>
+        <p class="text-sm text-ink/60 dark:text-white/60 mt-2">Generate your PDF and download it instantly.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PIXORA ============ -->
+  <section class="max-w-6xl mx-auto px-5 sm:px-8 pb-24">
+    <div class="pixora-card">
+      <div class="max-w-lg">
+        <span class="text-xs font-semibold tracking-wide uppercase text-white/70">Powered by the PIXORA Tools ecosystem</span>
+        <h2 class="font-display font-bold text-3xl text-white mt-3">More Useful Tools</h2>
+        <p class="text-white/80 mt-3">PDFSS is part of the PIXORA Tools ecosystem. Explore more useful browser-based tools designed to make everyday digital tasks easier.</p>
+        <a href="https://frankstack1.github.io/PIXORA-Tools/" target="_blank" rel="noopener noreferrer" class="btn-white mt-6">
+          Explore PIXORA Tools <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+      <div class="pixora-card__glyph" aria-hidden="true"><i class="fa-solid fa-shapes"></i></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="border-t border-purple-light dark:border-white/10 mt-8">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-14 grid sm:grid-cols-2 md:grid-cols-4 gap-10">
+    <div class="col-span-2 md:col-span-1">
+      <span class="font-display font-bold text-lg">PDFSS</span>
+      <p class="text-sm text-ink/50 dark:text-white/50 mt-2">Simple tools. Better workflows.</p>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wide text-ink/40 dark:text-white/40 mb-3">Navigate</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a href="#top" class="footer-link">Home</a></li>
+        <li><a href="#converter" class="footer-link">Image to PDF</a></li>
+        <li><a href="#how-it-works" class="footer-link">How It Works</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wide text-ink/40 dark:text-white/40 mb-3">Ecosystem</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a href="https://frankstack1.github.io/PIXORA-Tools/" target="_blank" rel="noopener noreferrer" class="footer-link">PIXORA Tools</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-purple-light dark:border-white/10 py-6 text-center text-xs text-ink/40 dark:text-white/40">
+    © 2026 PDFSS. All rights reserved.
+  </div>
+</footer>
+
+<!-- Toast root -->
+<div id="toast-root" class="toast-root" aria-live="assertive"></div>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>
